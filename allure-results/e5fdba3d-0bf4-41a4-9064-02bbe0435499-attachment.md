@@ -1,0 +1,102 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: CMSLoginTest.spec.ts >> login with invalid data
+- Location: tests\CMSLoginTest.spec.ts:25:5
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+```
+Error: locator.click: Test timeout of 30000ms exceeded.
+Call log:
+  - waiting for getByLabel('Login With Password ')
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e5]:
+    - generic [ref=e7]:
+      - link [ref=e10] [cursor=pointer]:
+        - /url: "#"
+      - list [ref=e12]:
+        - listitem [ref=e13]:
+          - link [ref=e14] [cursor=pointer]:
+            - /url: /auth/login
+            - button "Login" [ref=e15]
+  - generic [ref=e17]:
+    - generic [ref=e18]:
+      - heading "Welcome to" [level=4] [ref=e19]
+      - heading "Infinity Community" [level=2] [ref=e20]
+      - heading "Make learning a fun" [level=4] [ref=e22]
+    - generic [ref=e24]:
+      - heading "LOGIN WITH OTP" [level=3] [ref=e25]
+      - generic [ref=e26]:
+        - iframe [ref=e29]:
+          - generic [ref=f1e6]:
+            - text: protected by
+            - strong [ref=f1e7]: reCAPTCHA
+        - generic [ref=e31]:
+          - generic [ref=e32]: "+91"
+          - textbox "Phone Number" [active] [ref=e33]: "9970509617"
+        - button "Send OTP" [ref=e34] [cursor=pointer]
+        - generic [ref=e35] [cursor=pointer]: Login With Password
+```
+
+# Test source
+
+```ts
+  1  | import { Locator, Page } from "@playwright/test";
+  2  | 
+  3  | export class CMSloginPage{
+  4  | page:Page
+  5  | phoneNumber:Locator
+  6  | password:Locator
+  7  | LoginButton:Locator
+  8  | dashboard:Locator
+  9  | errorMsg:Locator
+  10 | PasswordClick:Locator
+  11 | 
+  12 | constructor(page:Page){
+  13 | 
+  14 |     this.page=page
+  15 |     this.phoneNumber=this.page.getByPlaceholder('Phone Number')
+  16 |     this.password=this.page.locator('#password')
+  17 |     this.LoginButton=this.page.locator('btn btn-primary login-btn').last()
+  18 |     this.dashboard=this.page.locator('.cmsui-logo').first()
+  19 |     this.errorMsg=this.page.locator('#toast-container')
+  20 |     this.PasswordClick=this.page.getByLabel('Login With Password ')
+  21 | }
+  22 | 
+  23 | 
+  24 | async LaunchUrl(url:string){
+  25 | 
+  26 |     await this.page.goto(url)
+  27 |     
+> 28 | await this.PasswordClick.click()
+     |                          ^ Error: locator.click: Test timeout of 30000ms exceeded.
+  29 | 
+  30 | }
+  31 | async LoginIntoCMS(phoneNumber:string, passsword:string){
+  32 | 
+  33 |     await this.phoneNumber.fill(phoneNumber)
+  34 |         await this.password.fill(passsword)
+  35 |         await this.LoginButton.click()
+  36 | 
+  37 |     }
+  38 | }
+  39 | 
+  40 | 
+  41 | 
+```
